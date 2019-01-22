@@ -6,7 +6,7 @@
 
 constexpr auto nl = '\n';
 
-struct LM : lasso::LoopManager<LM> {
+struct GameLogic {
     bool done = false;
     sf::RenderWindow window;
 
@@ -17,6 +17,7 @@ struct LM : lasso::LoopManager<LM> {
     void render(lasso::LoopStatus const &status,
                 lasso::high_resolution_duration const &time_delta) {
 
+        // just to pass time
         double x = 0.0;
         for (int i = 0; i < 700'000; ++i) {
             x = std::sin(i);
@@ -55,7 +56,7 @@ struct LM : lasso::LoopManager<LM> {
 };
 
 int main() {
-    LM lm;
-    lm.window.create(sf::VideoMode(480, 240), "SFML");
-    lasso::MainLoop{}.run(lm);
+    GameLogic gm;
+    gm.window.create(sf::VideoMode(480, 240), "Lasso test");
+    lasso::MainLoop{}.run(gm);
 }
