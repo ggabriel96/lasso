@@ -19,19 +19,21 @@ namespace lasso {
     };
 
     template<typename T> concept bool GameLogic =
-    requires (T game,
+    requires (T logic,
               LoopStatus const &status,
               high_resolution_duration const &time_delta) {
-        { game.is_done() } noexcept -> bool;
-        { game.render(status, time_delta) } -> void;
-        { game.simulate(status, time_delta) } -> void;
+        { logic.init() } -> void;
+        { logic.simulate(status, time_delta) } -> void;
+        { logic.render(status, time_delta) } -> void;
+        { logic.is_done() } noexcept -> bool;
     };
 
     class MainLoop {
     public:
-        // allow some form of adjustment to delta!?
+        // allow some form of adjustment of delta!?
         high_resolution_duration const delta =
-                high_resolution_duration{std::chrono::seconds{1}} / 60 + std::chrono::nanoseconds{1};
+                high_resolution_duration{std::chrono::seconds{1}} / 60
+                + std::chrono::nanoseconds{1};
 
         MainLoop() = default;
 
@@ -69,7 +71,7 @@ namespace lasso {
         }
 
     private:
-        // allow some form of adjustment to fps smoothing!?
+        // allow some form of adjustment of fps smoothing!?
         double fps_smoothing = 0.85;
     };
 
