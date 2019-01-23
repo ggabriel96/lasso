@@ -15,7 +15,12 @@ namespace lasso {
 
     struct LoopStatus {
         long fps{0};
+        high_resolution_duration time_frame{0};
         high_resolution_duration time_simulation{0};
+        high_resolution_duration time_total_elapsed{0};
+        high_resolution_duration time_total_simulated{0};
+        high_resolution_clock::time_point time_curr_frame = high_resolution_clock::now();
+        high_resolution_clock::time_point time_prev_frame = high_resolution_clock::now();
     };
 
     template<typename T> concept bool GameLogic =
@@ -41,32 +46,27 @@ namespace lasso {
             using namespace std::chrono_literals;
 
             LoopStatus status;
-            /**
-             * @TODO add all these time variables to loop status
-             */
-            auto time_prev = high_resolution_clock::now();
-            auto time_total = high_resolution_duration{0};
-            auto time_total_sim = high_resolution_duration{0};
-
             while (!game_logic.is_done()) {
-                auto const time_cur = high_resolution_clock::now();
-                auto const time_frame = time_cur - time_prev;
+                status.time_curr_frame = high_resolution_clock::now();
+                status.time_frame = status.time_curr_frame
+                                    - status.time_prev_frame;
 
-                status.time_simulation += time_frame;
+                status.time_simulation += status.time_frame;
 
                 while (MainLoop::delta <= status.time_simulation) {
                     game_logic.simulate(status, MainLoop::delta);
                     status.time_simulation -= MainLoop::delta;
-                    time_total_sim += MainLoop::delta;
+                    status.time_total_simulated += MainLoop::delta;
                 }
 
                 status.fps = long(status.fps * this->fps_smoothing)
-                             + long((1s / time_frame) * (1.0 - this->fps_smoothing));
+                             + long((1s / status.time_frame)
+                             * (1.0 - this->fps_smoothing));
 
                 game_logic.render(status, MainLoop::delta);
 
-                time_total += time_frame;
-                time_prev = time_cur;
+                status.time_total_elapsed += status.time_frame;
+                status.time_prev_frame = status.time_curr_frame;
             }
         }
 
