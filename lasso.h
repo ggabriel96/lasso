@@ -46,6 +46,7 @@ namespace lasso {
             using namespace std::chrono_literals;
 
             LoopStatus status;
+            game_logic.init();
             while (!game_logic.is_done()) {
                 status.time_curr_frame = high_resolution_clock::now();
                 status.time_frame = status.time_curr_frame
