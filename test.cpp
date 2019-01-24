@@ -6,22 +6,30 @@
 
 constexpr auto nl = '\n';
 
-struct GameLogic {
+struct Scene {
     bool done = false;
     bool circle_should_grow = true;
     sf::Font font;
     sf::CircleShape circle;
     sf::RenderWindow window;
 
-    GameLogic() {
-        this->window.create(sf::VideoMode(480, 240), "Lasso test");
+    explicit Scene(sf::RenderWindow const &window) {
+        this->window.create(window.getSystemHandle());
+    }
+
+    ~Scene() {
+        /**
+         * clear event queue
+         */
+        sf::Event e;
+        while (this->window.pollEvent(e));
+    }
+
+    void init() {
         this->circle.setRadius(50.0f);
         this->circle.setPointCount(256);
         this->circle.setFillColor(sf::Color::Yellow);
         this->font.loadFromFile("res/font/Roboto-Regular.ttf");
-    }
-
-    void init() {
     }
 
     void simulate(lasso::LoopStatus const &status,
@@ -58,15 +66,74 @@ struct GameLogic {
 //            double x = std::sin(i);
 //        }
 
-        sf::Text text;
-        text.setFont(this->font);
-        text.setFillColor(sf::Color::Cyan);
-        text.setString("FPS: " + std::to_string(status.fps));
-        text.setPosition(300, 180);
+        sf::Text fps;
+        fps.setFont(this->font);
+        fps.setFillColor(sf::Color::Cyan);
+        fps.setString("FPS: " + std::to_string(status.fps));
+        fps.setPosition(300, 180);
 
         this->window.clear();
         this->window.draw(this->circle);
-        this->window.draw(text);
+        this->window.draw(fps);
+        this->window.display();
+    }
+
+    [[nodiscard]] bool is_done() const noexcept {
+        return this->done;
+    }
+
+    void query_done() {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+            this->done = true;
+        }
+    }
+};
+
+struct Game {
+    bool done = false;
+    sf::Font font;
+    sf::RenderWindow window;
+
+    /**
+     * @TODO what should go in the constructor and what in init()?
+     */
+    Game() {
+        this->window.create(sf::VideoMode(480, 240), "Lasso test");
+    }
+
+    void init() {
+        this->font.loadFromFile("res/font/Roboto-Regular.ttf");
+    }
+
+    void simulate(lasso::LoopStatus const &status,
+                  lasso::high_resolution_duration const &time_delta) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+            auto scene = Scene(this->window);
+            lasso::MainLoop().run(scene);
+        }
+        this->query_done();
+    }
+
+    void render(lasso::LoopStatus const &status,
+                lasso::high_resolution_duration const &time_delta) {
+        auto const [wx, wy] = this->window.getSize();
+
+        sf::Text fps;
+        fps.setFont(this->font);
+        fps.setFillColor(sf::Color::Cyan);
+        fps.setString(std::to_string(status.fps));
+        fps.setPosition(wx - fps.getGlobalBounds().width - fps.getCharacterSize(), 0);
+
+        sf::Text description;
+        description.setFont(this->font);
+        description.setFillColor(sf::Color::White);
+        description.setString("Press ENTER to run 'game'");
+        description.setPosition(wx / 2 - description.getGlobalBounds().width / 2,
+                wy / 2 - description.getGlobalBounds().height / 2);
+
+        this->window.clear();
+        this->window.draw(fps);
+        this->window.draw(description);
         this->window.display();
     }
 
@@ -76,16 +143,22 @@ struct GameLogic {
 
     void query_done() {
         sf::Event event;
+        /**
+         * using sf::Keyboard::isKeyPressed() is a real-time
+         * keyboard check, which is not needed here
+         */
         while (this->window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
+            if (event.type == sf::Event::Closed
+                || (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Escape)) {
                 this->window.close();
                 this->done = true;
             }
         }
     }
+
 };
 
 int main() {
-    GameLogic gm;
-    lasso::MainLoop().run(gm);
+    Game game;
+    lasso::MainLoop().run(game);
 }
