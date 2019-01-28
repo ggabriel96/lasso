@@ -1,5 +1,5 @@
 # lasso
-A generic game loop implementation in C++
+A generic game loop implementation in C++ based on [Fix Your Timestep!](https://gafferongames.com/post/fix_your_timestep/)
 
 # Getting started
 
