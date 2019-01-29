@@ -28,6 +28,7 @@ struct Scene {
     void init() {
         this->circle.setRadius(50.0f);
         this->circle.setPointCount(256);
+        this->circle.setPosition(50.0f, 50.0f);
         this->circle.setFillColor(sf::Color::Yellow);
         this->font.loadFromFile("res/font/Roboto-Regular.ttf");
     }
@@ -38,14 +39,21 @@ struct Scene {
 //            double x = std::sin(i);
 //        }
 
-        float const radius = this->circle.getRadius();
-        if ((this->circle_speed > 0.0f && radius >= 100.0f)
-             || (this->circle_speed < 0.0f && radius <= 50.0f)) {
+        float const ro = this->circle.getRadius();
+
+        if ((this->circle_speed > 0.0f && ro >= 100.0f)
+             || (this->circle_speed < 0.0f && ro <= 50.0f)) {
             this->circle_speed = -this->circle_speed;
         }
 
-        float delta = float(time_delta.count()) / lasso::high_resolution_duration::period::den;
-        this->circle.setRadius(radius + this->circle_speed * delta);
+        /**
+         * @TODO delta_sec is calculated every frame unnecessarily...
+         */
+        float const delta_sec = float(time_delta.count()) / lasso::high_resolution_duration::period::den;
+        this->circle.setRadius(ro + this->circle_speed * delta_sec);
+
+        float const r = this->circle.getRadius();
+        this->circle.setPosition(100.0f - r, 100.0f - r);
 
         this->query_done();
     }
