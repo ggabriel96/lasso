@@ -7,8 +7,8 @@
 constexpr auto nl = '\n';
 
 struct Scene {
-    bool done = false;
-    bool circle_should_grow = true;
+    bool done{false};
+    float circle_speed{50.0f};
     sf::Font font;
     sf::CircleShape circle;
     sf::RenderWindow window;
@@ -39,21 +39,13 @@ struct Scene {
 //        }
 
         float const radius = this->circle.getRadius();
-        if (this->circle_should_grow) {
-            if (radius < 100.0f) {
-                this->circle.setRadius(radius + 1.0f);
-            } else {
-                this->circle_should_grow = !this->circle_should_grow;
-                this->circle.setRadius(radius - 1.0f);
-            }
-        } else {
-            if (radius > 50.0f) {
-                this->circle.setRadius(radius - 1.0f);
-            } else {
-                this->circle_should_grow = !this->circle_should_grow;
-                this->circle.setRadius(radius + 1.0f);
-            }
+        if ((this->circle_speed > 0.0f && radius >= 100.0f)
+             || (this->circle_speed < 0.0f && radius <= 50.0f)) {
+            this->circle_speed = -this->circle_speed;
         }
+
+        float delta = float(time_delta.count()) / lasso::high_resolution_duration::period::den;
+        this->circle.setRadius(radius + this->circle_speed * delta);
 
         this->query_done();
     }
