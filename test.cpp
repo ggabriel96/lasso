@@ -107,11 +107,23 @@ struct Game {
 
     void simulate(lasso::LoopStatus const &status,
                   lasso::high_resolution_duration const &time_delta) {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
-            auto scene = Scene(this->window);
-            lasso::MainLoop().run(scene);
+        sf::Event event;
+        /**
+         * using sf::Keyboard::isKeyPressed() is a real-time
+         * keyboard check, which is not needed here,
+         * and it does not interfere with event polling
+         * (i.e. keyboard events will still be there!)
+         */
+        while (this->window.pollEvent(event)) {
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter) {
+                auto scene = Scene(this->window);
+                lasso::MainLoop().run(scene);
+            } else if (event.type == sf::Event::Closed
+                || (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)) {
+                this->window.close();
+                this->done = true;
+            }
         }
-        this->query_done();
     }
 
     void render(lasso::LoopStatus const &status,
@@ -140,22 +152,6 @@ struct Game {
     [[nodiscard]] bool is_done() const noexcept {
         return this->done;
     }
-
-    void query_done() {
-        sf::Event event;
-        /**
-         * using sf::Keyboard::isKeyPressed() is a real-time
-         * keyboard check, which is not needed here
-         */
-        while (this->window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed
-                || (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Escape)) {
-                this->window.close();
-                this->done = true;
-            }
-        }
-    }
-
 };
 
 int main() {
