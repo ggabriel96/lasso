@@ -54,7 +54,7 @@ namespace lasso {
 
                 status.time_simulation += status.time_frame;
 
-                while (MainLoop::delta <= status.time_simulation) {
+                while (status.time_simulation >= MainLoop::delta) {
                     game_logic.simulate(status, MainLoop::delta);
                     status.time_simulation -= MainLoop::delta;
                     status.time_total_simulated += MainLoop::delta;
