@@ -3,7 +3,7 @@ project(lasso)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(test example/test.cpp)
+add_executable(nested example/nested.cpp)
 
-target_compile_options(test PRIVATE -O0 -fconcepts)
-target_link_libraries(test PRIVATE sfml-graphics sfml-window sfml-system)
+target_compile_options(nested PRIVATE -O0 -fconcepts)
+target_link_libraries(nested PRIVATE sfml-graphics sfml-window sfml-system)
