@@ -3,7 +3,7 @@ A generic game loop implementation in C++ based on [Fix Your Timestep!](https://
 
 # Getting started
 
-The following requirements must be met to compile and run [`test.cpp`](test.cpp):
+The following requirements must be met to compile and run [`test.cpp`](example/test.cpp):
 
 - [Simple and Fast Multimedia Library (SFML)](https://github.com/SFML/SFML) installed
 - Compiler with Concepts TS support (e.g. GCC 6 or above with options `-std=c++2a` and `-fconcepts`)  

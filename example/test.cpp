@@ -2,7 +2,7 @@
 #include <chrono>
 #include <iostream>
 #include <SFML/Graphics.hpp>
-#include "lasso.h"
+#include "../include/lasso.h"
 
 constexpr auto nl = '\n';
 
