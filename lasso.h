@@ -2,8 +2,8 @@
 // Created by gbrl on 20/01/19.
 //
 
-#ifndef LASSO_H
-#define LASSO_H
+#ifndef LASSO_LIBRARY_H
+#define LASSO_LIBRARY_H
 
 #include <chrono>
 
@@ -78,4 +78,4 @@ namespace lasso {
 
 }
 
-#endif //LASSO_H
+#endif //LASSO_LIBRARY_H
