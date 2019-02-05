@@ -5,4 +5,6 @@ project('lasso', 'cpp',
 
 lassolib = static_library('lasso', 'include/lasso.h')
 
-subdir('example')
+if get_option('example')
+    subdir('example')
+endif
