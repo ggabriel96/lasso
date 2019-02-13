@@ -42,14 +42,15 @@ struct Scene {
         float const ro = this->circle.getRadius();
 
         if ((this->circle_speed > 0.0f && ro >= 100.0f)
-             || (this->circle_speed < 0.0f && ro <= 50.0f)) {
+            || (this->circle_speed < 0.0f && ro <= 50.0f)) {
             this->circle_speed = -this->circle_speed;
         }
 
         /**
          * @TODO delta_sec is calculated every frame unnecessarily...
          */
-        float const delta_sec = float(time_delta.count()) / lasso::high_resolution_duration::period::den;
+        float const delta_sec = float(time_delta.count()) /
+                                lasso::high_resolution_duration::period::den;
         this->circle.setRadius(ro + this->circle_speed * delta_sec);
 
         float const r = this->circle.getRadius();
@@ -115,11 +116,13 @@ struct Game {
          * (i.e. keyboard events will still be there!)
          */
         while (this->window.pollEvent(event)) {
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter) {
+            if (event.type == sf::Event::KeyPressed &&
+                event.key.code == sf::Keyboard::Enter) {
                 auto scene = Scene(this->window);
                 lasso::MainLoop().run(scene);
             } else if (event.type == sf::Event::Closed
-                || (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)) {
+                       || (event.type == sf::Event::KeyPressed &&
+                           event.key.code == sf::Keyboard::Escape)) {
                 this->window.close();
                 this->done = true;
             }
@@ -128,19 +131,21 @@ struct Game {
 
     void render(lasso::LoopStatus const &status,
                 lasso::high_resolution_duration const &time_delta) {
-        auto const [wx, wy] = this->window.getSize();
+        auto const[wx, wy] = this->window.getSize();
 
         sf::Text fps;
         fps.setFont(this->font);
         fps.setFillColor(sf::Color::Cyan);
         fps.setString(std::to_string(status.fps));
-        fps.setPosition(wx - fps.getGlobalBounds().width - fps.getCharacterSize(), 0);
+        fps.setPosition(
+                wx - fps.getGlobalBounds().width - fps.getCharacterSize(), 0);
 
         sf::Text description;
         description.setFont(this->font);
         description.setFillColor(sf::Color::White);
         description.setString("Press ENTER to run 'game'");
-        description.setPosition(wx / 2 - description.getGlobalBounds().width / 2,
+        description.setPosition(
+                wx / 2 - description.getGlobalBounds().width / 2,
                 wy / 2 - description.getGlobalBounds().height / 2);
 
         this->window.clear();
@@ -155,6 +160,5 @@ struct Game {
 };
 
 int main() {
-    Game game;
-    lasso::MainLoop().run(game);
+    lasso::MainLoop{}.run(Game{});
 }
