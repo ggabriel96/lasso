@@ -3,6 +3,8 @@ project(lasso)
 
 set(CMAKE_CXX_STANDARD 20)
 
+include_directories( /usr/local/include )
+
 add_executable(nested example/nested.cpp)
 
 target_compile_options(nested PRIVATE -O0 -fconcepts)
