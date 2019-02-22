@@ -37,6 +37,7 @@ namespace lasso {
         { logic.simulate(status, time_delta) } -> void;
         { logic.render(status, time_delta) } -> void;
         { logic.is_done() } noexcept -> bool;
+        { logic.terminate() } -> void;
     };
 
     class MainLoop {
@@ -69,6 +70,7 @@ namespace lasso {
                 status.time_total_elapsed += status.time_frame;
                 status.time_prev = status.time_curr;
             }
+            game_logic.terminate();
         }
 
     private:

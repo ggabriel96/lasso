@@ -17,14 +17,6 @@ struct Scene {
         this->window.create(window.getSystemHandle());
     }
 
-    ~Scene() {
-        /**
-         * clear event queue
-         */
-        sf::Event e;
-        while (this->window.pollEvent(e));
-    }
-
     void init() {
         this->circle.setRadius(50.0f);
         this->circle.setPointCount(256);
@@ -81,6 +73,14 @@ struct Scene {
 
     [[nodiscard]] bool is_done() const noexcept {
         return this->done;
+    }
+
+    void terminate() {
+        /**
+         * clear event queue
+         */
+        sf::Event e;
+        while (this->window.pollEvent(e));
     }
 
     void query_done() {
@@ -157,6 +157,8 @@ struct Game {
     [[nodiscard]] bool is_done() const noexcept {
         return this->done;
     }
+
+    void terminate() {}
 };
 
 int main() {
