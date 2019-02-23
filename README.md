@@ -37,7 +37,7 @@ and you are ready to `#include <lasso/lasso.h>`.
 Conversely, if you have somehow put [`lasso.h`](include/lasso.h) in your
 source tree, you need to `#include "lasso.h"`.
 
-lasso gains access to your game loop via the C++ concept below:
+lasso knows how to call into your game via the C++ concept below:
 
 ```cpp
 template<typename T> concept bool GameLogic =
@@ -52,15 +52,15 @@ requires (T logic,
 };
 ```
 
-That means that you need a `class` or `struct` that implements the
+That means you need a `class` or `struct` that implements the
 following member functions:
 
 - `void init();`, which is called once right before the loop starts and you
   can use it to initialize anything you need (beyond the constructor of your
   class);
 - `void simulate(LoopStatus const &, high_resolution_duration const &);`,
-  which is called (possibly many times, see below) in every iteration to
-  advance your simulation (input, physics, AI, etc.) since the last call;
+  which is called if `delta` or more nanoseconds have passed since the last
+  call to advance your simulation (input, physics, AI, etc.);
 - `void render(LoopStatus const &, high_resolution_duration const &);`,
   which is called once in every iteration to render what has been simulated;
 - `bool is_done() noexcept;`, which is called once in every iteration to
@@ -79,7 +79,7 @@ running it is as simple as:
 ```cpp
 T t;
 # ...
-lasso::MainLoop{}.run(t); # or pass T{} directly
+lasso::MainLoop{}.run(t); # or pass in T{} directly
 ```
 
 The constructor of `lasso::MainLoop` has two parameters:
