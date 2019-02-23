@@ -15,8 +15,8 @@ so you may want to install it (although it is not required). A legacy
 [`CMakeLists.txt`](CMakeLists.txt) still exists, but is not
 *actively* maintained.
 A compiler with
-[Concepts](https://en.cppreference.com/w/cpp/language/constraints) support
-(e.g. GCC 6 or above with options `-std=c++2a` and `-fconcepts`)
+[Concepts TS](https://en.cppreference.com/w/cpp/experimental/constraints)
+support (e.g. GCC 6 or above with options `-std=c++2a` and `-fconcepts`)
 is required to use lasso. Then, having Meson installed,
 run the following commands at the root of this project:
 
