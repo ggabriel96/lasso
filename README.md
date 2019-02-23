@@ -73,7 +73,7 @@ following member functions:
 
 Additional member functions may be added in the future.
 Examples of classes implementing this concept can be seen in the
-[examples folder](example/).
+[examples folder](examples/).
 
 After having implemented your class (let us call it `T`),
 running it is as simple as:
@@ -87,24 +87,24 @@ lasso::MainLoop{}.run(t); // or pass in T{} directly
 ## Building the examples
 
 The [Simple and Fast Multimedia Library (SFML)](https://github.com/SFML/SFML)
-must be installed to compile and run an [example](example/).
+must be installed to compile and run an [example](examples/).
 If you want to enable the compilation of the examples, you may run:
 
 ```sh
-meson build -Dexample=true
+meson build -Dexamples=true
 cd build && ninja
 ```
 
 or, after having initially run Meson and while at the `build/` directory:
 
 ```sh
-meson configure -Dexample=true
+meson configure -Dexamples=true
 ninja
 ```
 
-In order for an example to locate [`Roboto-Regular.ttf`](example/res/font/) and
+In order for an example to locate [`Roboto-Regular.ttf`](examples/res/font/) and
 hence render text, you must run the compiled executable from either the build
-or the [`example/`](example/) directory (or set any of them as the working
+or the [`examples/`](examples/) directory (or set any of them as the working
 directory in your IDE; preferably the build one).
 
 # Third-party

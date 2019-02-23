@@ -5,6 +5,6 @@ project('lasso', 'cpp',
 
 install_headers('include/lasso.h', subdir: 'lasso/')
 
-if get_option('example')
-    subdir('example/')
+if get_option('examples')
+    subdir('examples/')
 endif
