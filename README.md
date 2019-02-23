@@ -82,14 +82,6 @@ T t;
 lasso::MainLoop{}.run(t); # or pass in T{} directly
 ```
 
-The constructor of `lasso::MainLoop` has two parameters:
-
-- `unsigned int simulations_per_second`, which determines how many times
-  `simulate()` may be called in a second by setting the **fixed simulation
-  delta time** (defaults to 30);
-- `float fps_smoothing`, which determines how aggressively FPS count changes
-  should be smoothed (between 0.0 and 1.0, defaults to 0.75).
-
 ## Building the examples
 
 The [Simple and Fast Multimedia Library (SFML)](https://github.com/SFML/SFML)
