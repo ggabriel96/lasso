@@ -5,6 +5,8 @@ A generic game loop implementation in C++ based on
 
 lasso is at early stages of design and development and is subject to
 incompatible changes. All feedback is welcome and appreciated!
+Detailed documentation is being built on the
+[wiki](https://github.com/ggabriel96/lasso/wiki).
 
 # Getting started
 
@@ -78,8 +80,8 @@ running it is as simple as:
 
 ```cpp
 T t;
-# ...
-lasso::MainLoop{}.run(t); # or pass in T{} directly
+// ...
+lasso::MainLoop{}.run(t); // or pass in T{} directly
 ```
 
 ## Building the examples
