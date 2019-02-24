@@ -1,6 +1,6 @@
 # Third-party
 
-The examples in this project thankfully utilizes the third-party resources
+The examples in this project thankfully utilize the third-party resources
 listed below. Their licenses are located in the [`licenses/`](licenses/)
 directory.
 
