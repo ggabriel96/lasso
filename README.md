@@ -71,9 +71,12 @@ following member functions:
   can use it to clean up anything you need (additionally to what will be
   done in the destructor of your class).
 
-Additional member functions may be added in the future.
+Additional member functions may be added to the GameLogic concept
+in the future. There are no constraints on other member functions or
+variables that the class may have.
 Examples of classes implementing this concept can be seen in the
-[examples folder](examples/).
+[examples folder](examples/), especially the [`Game.h`](examples/Game.h).
+and [`Game.cpp`](examples/Game.cpp) blueprints.
 
 After having implemented your class (let us call it `T`),
 running it is as simple as:
