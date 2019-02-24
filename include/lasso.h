@@ -18,7 +18,7 @@ namespace lasso {
     constexpr unsigned int default_simulations = 30;
 
     struct LoopStatus {
-        long fps{0};
+        int fps{0};
         high_resolution_duration time_frame{0};
         high_resolution_duration time_total_elapsed{0};
         high_resolution_duration time_total_simulated{0};
@@ -78,8 +78,8 @@ namespace lasso {
         float fps_smoothing;
 
         inline void compute_fps() {
-            status.fps = long(status.fps * fps_smoothing) +
-                         long((1s / status.time_frame) * (1.0 - fps_smoothing));
+            status.fps = int(status.fps * fps_smoothing) +
+                         int((1s / status.time_frame) * (1.0 - fps_smoothing));
         }
     };
 
