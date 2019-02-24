@@ -22,7 +22,7 @@ struct Scene {
         this->circle.setPointCount(256);
         this->circle.setPosition(50.0f, 50.0f);
         this->circle.setFillColor(sf::Color::Yellow);
-        this->font.loadFromFile("res/font/Roboto-Regular.ttf");
+        this->font.loadFromFile("data/fonts/Roboto-Regular.ttf");
     }
 
     void simulate(lasso::LoopStatus const &status,
@@ -103,7 +103,7 @@ struct Game {
     }
 
     void init() {
-        this->font.loadFromFile("res/font/Roboto-Regular.ttf");
+        this->font.loadFromFile("data/fonts/Roboto-Regular.ttf");
     }
 
     void simulate(lasso::LoopStatus const &status,

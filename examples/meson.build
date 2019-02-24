@@ -2,7 +2,7 @@ sfml_graphics = dependency('sfml-graphics')
 sfml_window = dependency('sfml-window')
 sfml_system = dependency('sfml-system')
 
-subdir('res/')
+subdir('data/')
 
 nested_exe = executable('nested', 'nested.cpp',
                         cpp_args: '-fconcepts',

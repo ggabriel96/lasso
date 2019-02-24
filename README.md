@@ -105,15 +105,7 @@ meson configure -Dexamples=true
 ninja
 ```
 
-In order for an example to locate [`Roboto-Regular.ttf`](examples/res/font/) and
-hence render text, you must run the compiled executable from either the build
-or the [`examples/`](examples/) directory (or set any of them as the working
-directory in your IDE; preferably the build one).
-
-# Third-party
-
-This project thankfully utilizes the third-party resources listed below.
-Their licenses are located in the directory [`licenses/`](licenses/).
-
-- [Simple and Fast Multimedia Library (SFML)](https://github.com/SFML/SFML)
-- [Google's Roboto Font Family](https://github.com/google/roboto/)
+In order for an example to locate [`Roboto-Regular.ttf`](examples/data/fonts/)
+and hence render text, you must run the compiled executable from either the
+build or the [`examples/`](examples/) directory (or set any of them as the
+working directory in your IDE; preferably the build one).
