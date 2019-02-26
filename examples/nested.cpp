@@ -26,7 +26,7 @@ struct Scene {
     }
 
     void simulate(lasso::LoopStatus const &status,
-                  lasso::high_resolution_duration const &time_delta) {
+                  lasso::duration const &delta) {
 //        for (int i = 0; i < 10'000; ++i) {
 //            double x = std::sin(i);
 //        }
@@ -41,8 +41,8 @@ struct Scene {
         /**
          * @TODO delta_sec is calculated every frame unnecessarily...
          */
-        float const delta_sec = float(time_delta.count()) /
-                                lasso::high_resolution_duration::period::den;
+        float const delta_sec = float(delta.count()) /
+                                lasso::duration::period::den;
         this->circle.setRadius(ro + this->circle_speed * delta_sec);
 
         float const r = this->circle.getRadius();
@@ -52,7 +52,7 @@ struct Scene {
     }
 
     void render(lasso::LoopStatus const &status,
-                lasso::high_resolution_duration const &time_delta) {
+                lasso::duration const &delta) {
 
         // just to pass time
 //        for (int i = 0; i < 700'000; ++i) {
@@ -107,7 +107,7 @@ struct Game {
     }
 
     void simulate(lasso::LoopStatus const &status,
-                  lasso::high_resolution_duration const &time_delta) {
+                  lasso::duration const &delta) {
         sf::Event event;
         /**
          * using sf::Keyboard::isKeyPressed() is a real-time
@@ -130,7 +130,7 @@ struct Game {
     }
 
     void render(lasso::LoopStatus const &status,
-                lasso::high_resolution_duration const &time_delta) {
+                lasso::duration const &delta) {
         auto const[wx, wy] = this->window.getSize();
 
         sf::Text fps;

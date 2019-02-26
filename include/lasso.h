@@ -9,51 +9,50 @@
 
 namespace lasso {
     using namespace std::chrono_literals;
-    using high_resolution_clock = std::chrono::high_resolution_clock;
-    using hi_res_rep = std::chrono::high_resolution_clock::rep;
-    using hi_res_period = std::chrono::high_resolution_clock::period;
-    using high_resolution_duration = std::chrono::duration<hi_res_rep, hi_res_period>;
+    using clock = std::chrono::steady_clock;
+    using duration = std::chrono::duration<clock::rep, clock::period>;
+    static_assert(lasso::clock::period::den > std::milli::den,
+                  "'lasso::clock' (aka 'std::chrono::steady_clock') resolution"
+                  " is not higher than std::milli (milliseconds)");
 
     constexpr unsigned int default_smoothing = 0.75;
     constexpr unsigned int default_simulations = 30;
 
     struct LoopStatus {
         int fps{0};
-        high_resolution_duration time_frame{0};
-        high_resolution_duration time_total_elapsed{0};
-        high_resolution_duration time_total_simulated{0};
-        high_resolution_duration time_simulation_available{0};
-        high_resolution_clock::time_point time_curr{
-                high_resolution_clock::now()};
-        high_resolution_clock::time_point time_prev{
-                high_resolution_clock::now()};
+        duration time_frame{0};
+        duration time_total_elapsed{0};
+        duration time_total_simulated{0};
+        duration time_simulation_available{0};
+        clock::time_point time_prev{clock::now()};
+        clock::time_point time_curr{clock::now()};
     };
 
     template<typename T> concept bool GameLogic =
     requires (T logic,
               LoopStatus const &status,
-              high_resolution_duration const &time_delta) {
+              duration const &delta) {
         { logic.init() } -> void;
-        { logic.simulate(status, time_delta) } -> void;
-        { logic.render(status, time_delta) } -> void;
+        { logic.simulate(status, delta) } -> void;
+        { logic.render(status, delta) } -> void;
         { logic.is_done() } noexcept -> bool;
         { logic.terminate() } -> void;
     };
 
     class MainLoop {
     public:
-        high_resolution_duration const delta;
+        duration const delta;
 
         explicit MainLoop(
                 unsigned int simulations_per_second = default_simulations,
                 float fps_smoothing = default_smoothing)
-                : delta{high_resolution_duration{1s} / simulations_per_second},
+                : delta{duration{1s} / simulations_per_second},
                   fps_smoothing{fps_smoothing} {}
 
         void run(GameLogic &&game_logic) {
             game_logic.init();
             while (!game_logic.is_done()) {
-                status.time_curr = high_resolution_clock::now();
+                status.time_curr = clock::now();
                 status.time_frame = status.time_curr - status.time_prev;
 
                 status.time_simulation_available += status.time_frame;
