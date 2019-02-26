@@ -45,11 +45,11 @@ lasso knows how to call into your game via the C++ concept below:
 template<typename T> concept bool GameLogic =
 requires (T logic,
           LoopStatus const &status,
-          high_resolution_duration const &time_delta) {
+          duration const &delta) {
     { logic.init() } -> void;
-    { logic.simulate(status, time_delta) } -> void;
-    { logic.render(status, time_delta) } -> void;
-    { logic.is_done() } noexcept -> bool;
+    { logic.simulate(status, delta) } -> void;
+    { logic.render(status, delta) } -> void;
+    { logic.is_done() } -> bool;
     { logic.terminate() } -> void;
 };
 ```
@@ -60,19 +60,20 @@ following member functions:
 - `void init();`, which is called once right before the loop starts and you
   can use it to initialize anything you need (beyond the constructor of your
   class);
-- `void simulate(LoopStatus const &, high_resolution_duration const &);`,
+- `void simulate(LoopStatus const &, duration const &);`,
   which is called if `delta` or more nanoseconds have passed since the last
   call to advance your simulation (input, physics, AI, etc.);
-- `void render(LoopStatus const &, high_resolution_duration const &);`,
+- `void render(LoopStatus const &, duration const &);`,
   which is called once in every iteration to render what has been simulated;
-- `bool is_done() noexcept;`, which is called once in every iteration to
+- `bool is_done();`, which is called once in every iteration to
   determine whether the loop should terminate;
 - `void terminate();`, which is called once right after the loop ends and you
   can use it to clean up anything you need (additionally to what will be
   done in the destructor of your class).
 
-Additional member functions may be added to the GameLogic concept
-in the future. There are no constraints on other member functions or
+Additional member functions may be added to GameLogic
+and its existing ones might be modified in the future.
+There are no constraints on other member functions or
 variables that the class may have.
 Examples of classes implementing this concept can be seen in the
 [examples folder](examples/), especially the [`Game.h`](examples/Game.h).

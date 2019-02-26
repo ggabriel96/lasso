@@ -6,15 +6,15 @@ namespace Blueprint {
     }
 
     void Game::simulate(lasso::LoopStatus const &loopStatus,
-                        lasso::high_resolution_duration const &delta) {
+                        lasso::duration const &delta) {
     }
 
     void Game::render(lasso::LoopStatus const &loopStatus,
-                    lasso::high_resolution_duration const &delta) {
+                    lasso::duration const &delta) {
 
     }
 
-    bool Game::is_done() noexcept {
+    bool Game::is_done() {
         return true;
     }
 

@@ -35,7 +35,7 @@ namespace lasso {
         { logic.init() } -> void;
         { logic.simulate(status, delta) } -> void;
         { logic.render(status, delta) } -> void;
-        { logic.is_done() } noexcept -> bool;
+        { logic.is_done() } -> bool;
         { logic.terminate() } -> void;
     };
 
