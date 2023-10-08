@@ -1,5 +1,9 @@
 build/
 
+# Dependencies
+subprojects/*
+!subprojects/*.wrap
+
 # Prerequisites
 *.d
 
