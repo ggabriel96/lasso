@@ -50,7 +50,8 @@ namespace lasso {
                 : delta{duration{1s} / simulations_per_second},
                   fps_smoothing{fps_smoothing} {}
 
-        void run(GameLogic &&game_logic) {
+        template <GameLogic GL>
+        void run(GL &&game_logic) {
             game_logic.init();
             while (!game_logic.is_done()) {
                 status.time_curr = clock::now();
