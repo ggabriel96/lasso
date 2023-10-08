@@ -6,6 +6,7 @@
 #define LASSO_LIBRARY_H
 
 #include <chrono>
+#include <type_traits>
 
 namespace lasso {
     using namespace std::chrono_literals;
@@ -28,15 +29,15 @@ namespace lasso {
         clock::time_point time_curr{clock::now()};
     };
 
-    template<typename T> concept bool GameLogic =
+    template<typename T> concept GameLogic =
     requires (T logic,
               LoopStatus const &status,
               duration const &delta) {
-        { logic.init() } -> void;
-        { logic.simulate(status, delta) } -> void;
-        { logic.render(status, delta) } -> void;
-        { logic.is_done() } -> bool;
-        { logic.terminate() } -> void;
+        { logic.init() } -> std::same_as<void>;
+        { logic.simulate(status, delta) } -> std::same_as<void>;
+        { logic.render(status, delta) } -> std::same_as<void>;
+        { logic.is_done() } -> std::same_as<bool>;
+        { logic.terminate() } -> std::same_as<void>;
     };
 
     class MainLoop {
