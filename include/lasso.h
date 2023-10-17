@@ -56,6 +56,7 @@ namespace lasso {
             while (!game_logic.is_done()) {
                 status.iteration_start = clock::now();
                 status.time_last_iteration = status.iteration_start - status.iteration_start_prev;
+                status.time_total_elapsed += status.time_last_iteration;
 
                 status.time_simulation_available += status.time_last_iteration;
                 while (status.time_simulation_available >= delta) {
@@ -68,7 +69,6 @@ namespace lasso {
 
                 game_logic.render(status, delta);
 
-                status.time_total_elapsed += status.time_last_iteration;
                 status.iteration_start_prev = status.iteration_start;
             }
             game_logic.terminate();
