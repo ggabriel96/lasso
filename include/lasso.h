@@ -21,12 +21,12 @@ namespace lasso {
 
     struct LoopStatus {
         int fps{0};
-        duration time_frame{0};
+        duration time_last_iteration{0};
         duration time_total_elapsed{0};
         duration time_total_simulated{0};
         duration time_simulation_available{0};
-        clock::time_point time_prev{clock::now()};
-        clock::time_point time_curr{clock::now()};
+        clock::time_point iteration_start_prev{clock::now()};
+        clock::time_point iteration_start{clock::now()};
     };
 
     template<typename T> concept GameLogic =
@@ -54,22 +54,22 @@ namespace lasso {
         void run(GL &&game_logic) {
             game_logic.init();
             while (!game_logic.is_done()) {
-                status.time_curr = clock::now();
-                status.time_frame = status.time_curr - status.time_prev;
+                status.iteration_start = clock::now();
+                status.time_last_iteration = status.iteration_start - status.iteration_start_prev;
 
-                status.time_simulation_available += status.time_frame;
-                while (status.time_simulation_available >= MainLoop::delta) {
-                    game_logic.simulate(status, MainLoop::delta);
-                    status.time_simulation_available -= MainLoop::delta;
-                    status.time_total_simulated += MainLoop::delta;
+                status.time_simulation_available += status.time_last_iteration;
+                while (status.time_simulation_available >= delta) {
+                    game_logic.simulate(status, delta);
+                    status.time_simulation_available -= delta;
+                    status.time_total_simulated += delta;
                 }
 
                 compute_fps();
 
-                game_logic.render(status, MainLoop::delta);
+                game_logic.render(status, delta);
 
-                status.time_total_elapsed += status.time_frame;
-                status.time_prev = status.time_curr;
+                status.time_total_elapsed += status.time_last_iteration;
+                status.iteration_start_prev = status.iteration_start;
             }
             game_logic.terminate();
         }
@@ -80,7 +80,7 @@ namespace lasso {
 
         inline void compute_fps() {
             status.fps = int(status.fps * fps_smoothing) +
-                         int((1s / status.time_frame) * (1.0 - fps_smoothing));
+                         int((1s / status.time_last_iteration) * (1.0 - fps_smoothing));
         }
     };
 
