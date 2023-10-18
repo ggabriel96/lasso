@@ -5,6 +5,7 @@
 #ifndef LASSO_LIBRARY_H
 #define LASSO_LIBRARY_H
 
+#include <algorithm>
 #include <chrono>
 #include <type_traits>
 
@@ -43,11 +44,13 @@ namespace lasso {
     class MainLoop {
     public:
         duration const delta;
+        duration const max_simulation_incr;
 
         explicit MainLoop(
                 unsigned int simulations_per_second = default_simulations,
                 float fps_smoothing = default_smoothing)
                 : delta{duration{1s} / simulations_per_second},
+                  max_simulation_incr{2 * delta},
                   fps_smoothing{fps_smoothing} {}
 
         template <GameLogic GL>
@@ -58,7 +61,7 @@ namespace lasso {
                 status.time_last_iteration = status.iteration_start - status.iteration_start_prev;
                 status.time_total_elapsed += status.time_last_iteration;
 
-                status.time_simulation_available += status.time_last_iteration;
+                status.time_simulation_available += std::clamp(status.time_last_iteration, std::chrono::nanoseconds::zero(), max_simulation_incr);
                 while (status.time_simulation_available >= delta) {
                     game_logic.simulate(status, delta);
                     status.time_simulation_available -= delta;
