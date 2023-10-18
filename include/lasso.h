@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <thread>
 #include <type_traits>
 
 namespace lasso {
@@ -56,7 +57,7 @@ namespace lasso {
                   max_simulation_incr{2 * delta},
                   fps_smoothing{fps_smoothing} {}
 
-        template <GameLogic GL>
+        template <unsigned int max_fps = 0, GameLogic GL>
         void run(GL &&game_logic) {
             game_logic.init();
             while (!game_logic.is_done()) {
@@ -80,6 +81,12 @@ namespace lasso {
                 game_logic.render(status, delta);
                 status.time_last_render = clock::now() - render_start;
                 status.time_total_rendering += status.time_last_render;
+
+                if constexpr (max_fps > 0) {
+                    // floor it to allow some headroom
+                    thread_local static auto const sleep_amount = std::chrono::floor<std::chrono::milliseconds>(duration{1s} / max_fps);
+                    std::this_thread::sleep_until(status.iteration_start + sleep_amount);
+                }
             }
             game_logic.terminate();
         }
