@@ -16,7 +16,7 @@ namespace lasso {
                   "'lasso::clock' (aka 'std::chrono::steady_clock') resolution"
                   " is not higher than std::milli (milliseconds)");
 
-    constexpr unsigned int default_smoothing = 0.75;
+    constexpr float default_smoothing = 0.75;
     constexpr unsigned int default_simulations = 30;
 
     struct LoopStatus {
