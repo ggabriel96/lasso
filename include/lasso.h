@@ -23,8 +23,11 @@ namespace lasso {
     struct LoopStatus {
         int fps{0};
         duration time_last_iteration{0};
+        duration time_last_render{0};
+        duration time_last_simulation{0};
         duration time_total_elapsed{0};
-        duration time_total_simulated{0};
+        duration time_total_simulating{0};
+        duration time_total_rendering{0};
         duration time_simulation_available{0};
         clock::time_point iteration_start_prev{clock::now()};
         clock::time_point iteration_start{clock::now()};
@@ -57,22 +60,26 @@ namespace lasso {
         void run(GL &&game_logic) {
             game_logic.init();
             while (!game_logic.is_done()) {
+                status.iteration_start_prev = status.iteration_start;
                 status.iteration_start = clock::now();
                 status.time_last_iteration = status.iteration_start - status.iteration_start_prev;
                 status.time_total_elapsed += status.time_last_iteration;
 
-                status.time_simulation_available += std::clamp(status.time_last_iteration, std::chrono::nanoseconds::zero(), max_simulation_incr);
-                while (status.time_simulation_available >= delta) {
-                    game_logic.simulate(status, delta);
-                    status.time_simulation_available -= delta;
-                    status.time_total_simulated += delta;
-                }
-
                 compute_fps();
 
-                game_logic.render(status, delta);
+                status.time_simulation_available += std::clamp(status.time_last_iteration, std::chrono::nanoseconds::zero(), max_simulation_incr);
+                while (status.time_simulation_available >= delta) {
+                    auto const simulation_start = clock::now();
+                    game_logic.simulate(status, delta);
+                    status.time_last_simulation = clock::now() - simulation_start;
+                    status.time_total_simulating += status.time_last_simulation;
+                    status.time_simulation_available -= delta;
+                }
 
-                status.iteration_start_prev = status.iteration_start;
+                auto const render_start = clock::now();
+                game_logic.render(status, delta);
+                status.time_last_render = clock::now() - render_start;
+                status.time_total_rendering += status.time_last_render;
             }
             game_logic.terminate();
         }
