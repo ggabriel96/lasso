@@ -13,6 +13,10 @@ build:
 test:
 	meson test -C build/ --print-errorlogs
 
+.PHONY: format
+format:
+	clang-format --verbose -i include/*.h examples/*.h examples/*.cpp
+
 .PHONY: clean
 clean:
 	rm build/ -rf
