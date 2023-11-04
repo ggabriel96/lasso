@@ -17,8 +17,14 @@ using duration = std::chrono::duration<clock::rep, clock::period>;
 static_assert(lasso::clock::period::den > std::milli::den, "'lasso::clock' (aka 'std::chrono::steady_clock') resolution"
                                                            " is not higher than std::milli (milliseconds)");
 
-constexpr float default_smoothing = 0.0;
-constexpr unsigned int default_simulations = 30;
+constexpr static float default_smoothing = 0.0;
+constexpr static unsigned int default_simulations = 30;
+
+struct Options {
+    unsigned short max_fps = 0;
+    unsigned short simulations_per_second = default_simulations;
+    float fps_smoothing = default_smoothing;
+};
 
 struct LoopStatus {
     int fps{0};
@@ -44,14 +50,10 @@ concept GameLogic = requires(T logic, LoopStatus const &status, duration const &
 
 class MainLoop {
 public:
-    duration const delta;
-    duration const max_simulation_incr;
+    explicit MainLoop(Options options = {})
+        : options(options), delta{duration{1s} / options.simulations_per_second}, max_simulation_incr{2 * delta} {}
 
-    explicit MainLoop(unsigned int simulations_per_second = default_simulations,
-                      float fps_smoothing = default_smoothing)
-        : delta{duration{1s} / simulations_per_second}, max_simulation_incr{2 * delta}, fps_smoothing{fps_smoothing} {}
-
-    template <unsigned int max_fps = 0, GameLogic GL>
+    template <GameLogic GL>
     void run(GL &&game_logic) {
         game_logic.init();
         while (!game_logic.is_done()) {
@@ -77,10 +79,10 @@ public:
             status.time_last_render = clock::now() - render_start;
             status.time_total_rendering += status.time_last_render;
 
-            if constexpr (max_fps > 0) {
+            if (options.max_fps > 0) {
                 // floor it to allow some headroom
                 thread_local static auto const sleep_amount =
-                    std::chrono::floor<std::chrono::milliseconds>(duration{1s} / max_fps);
+                    std::chrono::floor<std::chrono::milliseconds>(duration{1s} / options.max_fps);
                 std::this_thread::sleep_until(status.iteration_start + sleep_amount);
             }
         }
@@ -89,10 +91,12 @@ public:
 
 private:
     LoopStatus status;
-    float fps_smoothing;
+    Options options;
+    duration const delta;
+    duration const max_simulation_incr;
 
     inline void compute_fps() {
-        status.fps = int(status.fps * fps_smoothing) + int((1s / status.time_last_iteration) * (1.0 - fps_smoothing));
+        status.fps = int(status.fps * options.fps_smoothing) + int((1s / status.time_last_iteration) * (1.0 - options.fps_smoothing));
     }
 };
 
