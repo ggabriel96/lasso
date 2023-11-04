@@ -19,6 +19,7 @@ static_assert(lasso::clock::period::den > std::milli::den, "'lasso::clock' (aka 
 
 constexpr static unsigned int default_simulations = 30;
 constexpr static duration half_sec{500ms};
+constexpr static duration one_sec{1s};
 
 struct Options {
     unsigned short max_fps = 0;
@@ -50,7 +51,7 @@ concept GameLogic = requires(T logic, LoopStatus const &status, duration const &
 class MainLoop {
 public:
     explicit MainLoop(Options options = {})
-        : options(options), delta{duration{1s} / options.simulations_per_second}, max_simulation_incr{2 * delta} {}
+        : options(options), delta{one_sec / options.simulations_per_second}, max_simulation_incr{2 * delta} {}
 
     template <GameLogic GL>
     void run(GL &&game_logic) {
@@ -90,7 +91,7 @@ public:
             if (options.max_fps > 0) {
                 // floor it to allow some headroom
                 thread_local static auto const sleep_amount =
-                    std::chrono::floor<std::chrono::milliseconds>(duration{1s} / options.max_fps);
+                    std::chrono::floor<std::chrono::milliseconds>(one_sec / options.max_fps);
                 std::this_thread::sleep_until(status.iteration_start + sleep_amount);
             }
 
