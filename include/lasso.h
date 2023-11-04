@@ -17,13 +17,12 @@ using duration = std::chrono::duration<clock::rep, clock::period>;
 static_assert(lasso::clock::period::den > std::milli::den, "'lasso::clock' (aka 'std::chrono::steady_clock') resolution"
                                                            " is not higher than std::milli (milliseconds)");
 
-constexpr static float default_smoothing = 0.0;
 constexpr static unsigned int default_simulations = 30;
+constexpr static duration half_sec{500ms};
 
 struct Options {
     unsigned short max_fps = 0;
     unsigned short simulations_per_second = default_simulations;
-    float fps_smoothing = default_smoothing;
 };
 
 struct LoopStatus {
@@ -56,13 +55,22 @@ public:
     template <GameLogic GL>
     void run(GL &&game_logic) {
         game_logic.init();
+
+        unsigned short frames_count = 0;
+        auto half_sec_cap = std::chrono::nanoseconds::zero();
+
         while (!game_logic.is_done()) {
             status.iteration_start_prev = status.iteration_start;
             status.iteration_start = clock::now();
             status.time_last_iteration = status.iteration_start - status.iteration_start_prev;
             status.time_total_elapsed += status.time_last_iteration;
 
-            compute_fps();
+            half_sec_cap += status.time_last_iteration;
+            if (half_sec_cap >= half_sec) {
+                status.fps = (1 + half_sec_cap / half_sec) * frames_count;
+                half_sec_cap = std::chrono::nanoseconds::zero();
+                frames_count = 0;
+            }
 
             status.time_simulation_available +=
                 std::clamp(status.time_last_iteration, std::chrono::nanoseconds::zero(), max_simulation_incr);
@@ -85,6 +93,8 @@ public:
                     std::chrono::floor<std::chrono::milliseconds>(duration{1s} / options.max_fps);
                 std::this_thread::sleep_until(status.iteration_start + sleep_amount);
             }
+
+            frames_count += 1;
         }
         game_logic.terminate();
     }
@@ -94,10 +104,6 @@ private:
     Options options;
     duration const delta;
     duration const max_simulation_incr;
-
-    inline void compute_fps() {
-        status.fps = int(status.fps * options.fps_smoothing) + int((1s / status.time_last_iteration) * (1.0 - options.fps_smoothing));
-    }
 };
 
 } // namespace lasso
