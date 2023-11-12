@@ -50,8 +50,8 @@ concept GameLogic = requires(T logic, LoopStatus const &status, duration const &
 
 class MainLoop {
 public:
-    explicit MainLoop(Options options = {})
-        : options(options), delta{one_sec / options.simulations_per_second}, max_simulation_incr{2 * delta} {}
+    explicit MainLoop(Options o = {})
+        : options(o), delta{one_sec / o.simulations_per_second}, max_simulation_incr{2 * delta} {}
 
     template <GameLogic GL>
     void run(GL &&game_logic) {
